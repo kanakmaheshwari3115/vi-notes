@@ -1,111 +1,130 @@
-# WriteLab — Writing App
+# Vi-Notes
 
-A full-stack writing application with user authentication and per-user writing sessions.
+**Vi-Notes** is an authenticity verification platform designed to distinguish genuine human-written content from AI-generated or AI-assisted text. The system focuses on analyzing **writing behavior** alongside **statistical and linguistic characteristics** of the text to establish reliable authorship verification.
 
-## Tech Stack
-
-| Layer     | Technology                        |
-|-----------|-----------------------------------|
-| Frontend  | React + TypeScript                |
-| Backend   | Node.js + Express.js              |
-| Database  | MongoDB (via Mongoose)            |
-| Auth      | JWT + bcryptjs                    |
+This repository represents the **design and conceptual foundation** for the Vi-Notes system.
 
 ---
 
-## Project Structure
+## Motivation
 
-```
-writing-app/
-├── backend/
-│   ├── src/
-│   │   ├── config/db.js          # MongoDB connection
-│   │   ├── middleware/auth.js    # JWT protect middleware
-│   │   ├── models/
-│   │   │   ├── User.js           # User schema (email + hashed password)
-│   │   │   └── WritingSession.js # Session schema (title, content, wordCount)
-│   │   ├── routes/
-│   │   │   ├── auth.js           # POST /register, POST /login, GET /me
-│   │   │   └── sessions.js       # CRUD for writing sessions
-│   │   └── index.js              # Express app entry
-│   ├── .env.example
-│   └── package.json
-│
-└── frontend/
-    ├── public/index.html
-    ├── src/
-    │   ├── context/AuthContext.tsx  # Auth state + login/register/logout
-    │   ├── hooks/useApi.ts          # Typed API client
-    │   ├── pages/
-    │   │   ├── AuthPage.tsx / .css  # Login + Register UI
-    │   │   └── EditorPage.tsx / .css # Writing editor with sidebar
-    │   ├── types/index.ts           # Shared TypeScript types
-    │   ├── App.tsx                  # Root + route guard
-    │   └── index.tsx / .css         # Entry + global styles
-    ├── tsconfig.json
-    └── package.json
-```
+With the widespread availability of AI writing tools, verifying true human authorship has become increasingly challenging. Most existing detection methods rely primarily on textual analysis, which can be inconsistent and easy to bypass.
+
+Vi-Notes approaches this problem by combining:
+- Behavioral signals from the writing process
+- Statistical analysis of the written content
+- Correlation between how content is written and what is written
 
 ---
 
-## Setup & Run
+## Core Idea
 
-### Prerequisites
-- Node.js 18+
-- MongoDB running locally (or a MongoDB Atlas URI)
+Human writing naturally includes:
+- Variable typing speeds
+- Pauses during thinking
+- Revisions during idea formation
+- Irregular sentence structures
+- A relationship between content complexity and editing frequency
 
-### 1. Backend
+AI-generated or pasted text often lacks these behavioral signatures.
 
-```bash
-cd backend
-npm install
-
-# Copy and fill in env vars
-cp .env.example .env
-# Edit .env:
-#   MONGODB_URI=mongodb://localhost:27017/writing-app
-#   JWT_SECRET=change_this_to_a_long_random_string
-
-npm run dev   # starts on http://localhost:5000
-```
-
-### 2. Frontend
-
-```bash
-cd frontend
-npm install
-npm start     # starts on http://localhost:3000
-```
-
-The frontend proxies `/api/*` to `http://localhost:5000` automatically (via `"proxy"` in package.json).
+Vi-Notes is designed to capture and analyze these characteristics to assess authorship authenticity.
 
 ---
 
-## API Endpoints
+## Key Features
 
-### Auth
-| Method | Endpoint           | Auth? | Description          |
-|--------|--------------------|-------|----------------------|
-| POST   | /api/auth/register | No    | Create account       |
-| POST   | /api/auth/login    | No    | Login, receive JWT   |
-| GET    | /api/auth/me       | Yes   | Get current user     |
+### Writing Session Monitoring
+- Capture keystroke timing metadata (not raw key content)
+- Track pauses, deletions, edits, and writing flow
+- Detect pasted or externally inserted text blocks
 
-### Writing Sessions
-| Method | Endpoint             | Auth? | Description              |
-|--------|----------------------|-------|--------------------------|
-| GET    | /api/sessions        | Yes   | List all user sessions   |
-| POST   | /api/sessions        | Yes   | Create new session       |
-| GET    | /api/sessions/:id    | Yes   | Get single session       |
-| PATCH  | /api/sessions/:id    | Yes   | Update title/content     |
-| DELETE | /api/sessions/:id    | Yes   | Delete session           |
+### Behavioral Pattern Analysis
+- Pause distribution before sentences and paragraphs
+- Typing speed variance
+- Revision frequency relative to text complexity
+- Micro-pauses around punctuation and structural boundaries
+
+### Textual Statistical Analysis
+- Sentence length variation
+- Vocabulary diversity metrics
+- Stylistic consistency analysis
+- Linguistic irregularities typical of human writing
+
+### Cross-Verification Engine
+- Correlate keyboard behavior with text evolution
+- Identify mismatches between behavioral data and content
+- Flag suspicious uniformity patterns
+
+### Authenticity Reports
+- Confidence score for human authorship
+- Highlighted suspicious segments
+- Supporting behavioral and textual indicators
+- Shareable verification summaries
 
 ---
 
-## Features
+## Tech Stack (MERN Architecture)
 
-- **Registration & Login** — email + password, JWT stored in localStorage
-- **Route guard** — unauthenticated users always see the Auth page
-- **Writing Editor** — distraction-free textarea with auto-expanding height
-- **Autosave** — content and title save automatically 1.5s after you stop typing
-- **Session list** — sidebar shows all sessions with word count + last updated date
-- **Per-user isolation** — all session queries are scoped to the logged-in user
+### Frontend
+- React
+- TypeScript
+- Electron for desktop-level keyboard event access
+
+### Backend
+- Node.js
+- Express.js
+- RESTful APIs for session handling and analysis
+
+### Database
+- MongoDB
+- Encrypted storage for writing sessions, keystroke metadata, and reports
+
+### Machine Learning
+- TensorFlow / PyTorch
+- Supervised learning for human vs AI-assisted writing
+- Unsupervised anomaly detection
+- NLP-based statistical signature analysis
+
+---
+
+## Privacy & Ethics
+
+Vi-Notes is designed with privacy-first principles:
+
+- No storage of raw keystroke content
+- Only timing, frequency, and structural metadata is collected
+- Encrypted data storage
+- User-controlled session tracking
+- Monitoring limited strictly to active writing sessions
+
+---
+
+## Project Goals
+
+- Restore trust in written content authenticity
+- Differentiate between human-written, AI-assisted, and AI-generated text
+- Adapt detection methods as AI writing tools evolve
+- Maintain ethical, transparent, and privacy-conscious verification
+
+---
+
+## Repository Scope
+
+This repository currently serves as:
+- A design reference
+- A research and experimentation space
+- A foundation for future MERN-based implementation
+
+---
+
+## Contributing
+
+Contributions are welcome, especially for **feature requests and their implementation**.  
+If you are interested in working on an existing feature request or proposing a new one, please open or comment on an issue to start the discussion.
+
+---
+
+## License
+
+This project is licensed under the MIT License.
