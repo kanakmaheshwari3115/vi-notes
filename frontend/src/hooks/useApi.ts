@@ -1,5 +1,7 @@
-const BASE_URL = '/api';
-
+const BASE_URL = process.env.REACT_APP_API_URL
+  ? `${process.env.REACT_APP_API_URL}/api`
+  : '/api';
+  
 const getToken = (): string | null => localStorage.getItem('token');
 
 const headers = (withAuth = true): HeadersInit => {
