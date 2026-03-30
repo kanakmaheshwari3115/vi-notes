@@ -1,4 +1,6 @@
+require('dns').setDefaultResultOrder('ipv4first');
 require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
@@ -9,7 +11,6 @@ const behaviorRoutes = require('./routes/behavior');
 
 const app = express();
 
-// Connect to MongoDB
 connectDB();
 
 // Middleware
@@ -17,6 +18,7 @@ app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
   credentials: true,
 }));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
